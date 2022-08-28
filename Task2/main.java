@@ -8,7 +8,7 @@ public class main {
 
         sort(array);
 
-        System.out.println("Отсортированный массив:");
+        System.out.println("РћС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ РјР°СЃСЃРёРІ::");
         for (int j : array) {
             System.out.print("[");
             System.out.print(j);
