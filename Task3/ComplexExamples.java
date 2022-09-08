@@ -69,12 +69,15 @@ public class ComplexExamples {
         System.out.println("Task1:");
         System.out.println();
 
-        Map<Object, Long> map = Arrays.stream(RAW_DATA).distinct()
+        Map<String, Long> sortedMap = Arrays.stream(Optional.of(RAW_DATA).orElseThrow(NullPointerException::new))
+                .filter(Objects::nonNull).distinct()
+                .sorted(Comparator.comparing(obj -> obj.name))
+                .sorted(Comparator.comparing(obj -> obj.id))
                 .collect(Collectors.groupingBy(Person::getName, Collectors.counting()));
-        Set<Map.Entry<Object, Long>> entrySet = map.entrySet();
-        for (Map.Entry<Object, Long> obj : entrySet) {
-            System.out.println("Key: \t" + obj.getKey() + "\nValue:\t" + obj.getValue());
-        }
+        sortedMap.forEach((key, value) -> {
+            System.out.println("Key: " + key);
+            System.out.println("Value:\t " + value);
+        });
 
         System.out.println();
 
@@ -82,8 +85,8 @@ public class ComplexExamples {
         System.out.println("Task2:");
         System.out.println();
 
-        int array[] = {3, 4, 2, 7};
-        System.out.println(findPare(array, 10));
+        int[] array = new int[]{3, 4, 2, 7};
+        System.out.println(Arrays.toString(findPare(array, 10)));
         System.out.println();
 
 
@@ -106,32 +109,45 @@ public class ComplexExamples {
             [3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
      */
 
-    public static List<Integer> findPare(int[] array, int number) {
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array.length; j++) {
-                if (array[i] + array[j] == number && i != j && list.isEmpty()) {
-                    list.add(array[i]);
-                    list.add(array[j]);
-                }
+    public static int[] findPare(int[] array, int number) {
+        if (array != null) {
+            Arrays.sort(array);
+        } else return null;
+
+        int leftPointer = 0;
+        int rightPointer = array.length - 1;
+        int sumNumbers;
+
+        while (leftPointer < rightPointer) {
+            sumNumbers = array[leftPointer] + array[rightPointer];
+            if (sumNumbers == number) {
+                return new int[]{array[leftPointer], array[rightPointer]};
+            }
+            if (sumNumbers < number) {
+                leftPointer++;
+            } else {
+                rightPointer++;
             }
         }
-        return list;
+        return null;
     }
 
     /*
     Task3
         Реализовать функцию нечеткого поиска
      */
-    public static boolean fuzzySearch(String s1, String s2) {
-        StringBuilder strCoincidences = new StringBuilder();
-        int index = 0;
-        for (int i = 0; i < s2.length(); i++) {
-            if (s2.charAt(i) == s1.charAt(index)) {
-                strCoincidences.append(s1.charAt(index));
-                if (strCoincidences.toString().equals(s1)) {
+    public static boolean fuzzySearch(String searchString, String inputString) {
+        if ((searchString.isEmpty() || inputString.isEmpty())) {
+            return false;
+        }
+        String strCoincidences = "";
+        int indexForSearchString = 0;
+        for (int i = 0; i < inputString.length(); i++) {
+            if (inputString.charAt(i) == searchString.charAt(indexForSearchString)) {
+                strCoincidences += searchString.charAt(indexForSearchString);
+                if (strCoincidences.equals(searchString)) {
                     return true;
-                } else index++;
+                } else indexForSearchString++;
             }
         }
         return false;
